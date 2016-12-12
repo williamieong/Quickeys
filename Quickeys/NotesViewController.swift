@@ -66,6 +66,7 @@ class NotesViewController: NSViewController {
         
         let allText = inputText.attributedString().string
         var url_text = ""
+        var clean_url_text = ""
         
         if let selectedText = inputText.attributedSubstring(forProposedRange: inputText.selectedRange(), actualRange: nil)?.string {
             url_text = urlEscapeText(txt: selectedText)
@@ -73,12 +74,19 @@ class NotesViewController: NSViewController {
             url_text = urlEscapeText(txt: allText)
         }
         
-        if let url = URL(string: BASE_URL + url_text), NSWorkspace.shared().open(url) {
+        //.urlHostAllowed 
+        let customAllowedSet =  NSCharacterSet(charactersIn:"+=\"#%/<>?@\\^`{|}").inverted
+        clean_url_text = url_text.addingPercentEncoding(withAllowedCharacters: customAllowedSet)!
+        NSLog(clean_url_text)
+        
+        if let url = URL(string: BASE_URL + clean_url_text), NSWorkspace.shared().open(url) {
             NSLog("browser opened successfully")
         } else {
             NSLog("browser failed to open")
             
         }
+        
+        
     }
 }
 

@@ -40,7 +40,11 @@ class NotesViewController: NSViewController {
     // Functions
     
     func urlEscapeText(txt: String) -> String{
-        return txt.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
+        var clean_text = ""
+        let customAllowedSet =  NSCharacterSet(charactersIn:"+").inverted
+        clean_text = txt.addingPercentEncoding(withAllowedCharacters: NSCharacterSet.urlQueryAllowed)!
+        clean_text = clean_text.addingPercentEncoding(withAllowedCharacters: customAllowedSet)!
+        return clean_text
     }
     
     func searchTextOnWebsite(website: String) {
@@ -66,12 +70,11 @@ class NotesViewController: NSViewController {
         
         let allText = inputText.attributedString().string
         var url_text = ""
-        let customAllowedSet =  NSCharacterSet(charactersIn:"+").inverted
         
         if let selectedText = inputText.attributedSubstring(forProposedRange: inputText.selectedRange(), actualRange: nil)?.string {
-            url_text = urlEscapeText(txt: selectedText).addingPercentEncoding(withAllowedCharacters: customAllowedSet)!
+            url_text = urlEscapeText(txt: selectedText)
         } else {
-            url_text = urlEscapeText(txt: allText).addingPercentEncoding(withAllowedCharacters: customAllowedSet)!
+            url_text = urlEscapeText(txt: allText)
         }
         
         if let url = URL(string: BASE_URL + url_text), NSWorkspace.shared().open(url) {
